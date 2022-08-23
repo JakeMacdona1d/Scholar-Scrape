@@ -85,6 +85,7 @@ def getLink (start, text) :
 def querySearch (query) :
     # Mozilla/5.0 (Macintosh; Intel Mac OS X 0_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9
     headers = {'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari/605.1.15 Version/13.0.4'}
+    # proxies = {"http": "http://172.29.15.137:9993","https": "https://172.29.15.137:16"}
 
 
     # titl = 'Designing human-autonomy teaming experiments through reinforcement learning'
