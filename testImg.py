@@ -25,3 +25,5 @@ def savePdf(url,dir):
 
     # Download image
     download_pdf(url, file_name, dir, headers)
+
+savePdf
