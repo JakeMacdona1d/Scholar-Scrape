@@ -1,9 +1,11 @@
 from serpapi import GoogleSearch
 from functions import *
 import time
+import os
+
 
 params = {
-    "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3",
+    "api_key": os.environ['serapapiKey'],
     "engine": "google_scholar_author",
     "author_id": "G1CnZ38AAAAJ",
     "hl": "en",
