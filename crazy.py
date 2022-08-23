@@ -28,10 +28,10 @@ def querySearch (query) :
     response=requests.get(url,headers=headers)
     soup=BeautifulSoup(response.content,'lxml')
 
-    print(soup.select('[data-lid]'))
+    # print(soup.select('[data-lid]'))
    
     contents = str(soup.select('[data-lid]'))
 
-    getLink(contents.find(titl),contents)
+    return getLink(contents.find(titl),contents)
 
-querySearch('Designing human-autonomy teaming experiments through reinforcement learning')
+print(querySearch('Designing human-autonomy teaming experiments through reinforcement learning'))
