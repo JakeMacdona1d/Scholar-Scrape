@@ -22,3 +22,4 @@ def getAbstract (url):
     text_file = open("abstract.txt", "w")
     n = text_file.write(bodyContent)
     text_file.close()
+getAbstract("https://scholar.google.com/citations?view_op=view_citation&hl=en&user=G1CnZ38AAAAJ&citation_for_view=G1CnZ38AAAAJ:4JMBOYKVnBMC")
