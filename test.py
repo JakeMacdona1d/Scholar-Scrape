@@ -23,7 +23,6 @@ class ArtItem:
       self.link = text[start:end + start]
       self.link = str(self.link).replace("'",'')
       self.link = str(self.link).replace('link: ','')
-      print (self.searchP)
       self.searchP["q"] = str(self.link)
 
     def setTit (self,text):
@@ -91,4 +90,4 @@ for i in range(len(strArr)) :
   print (item.link)
   print (item.authors)
 
-  print (item.search(item))
+  # print (item.search(item))
