@@ -10,28 +10,22 @@ def getAbstract (url):
     # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
     results = str(soup)
-    # print (soup)
 
-    # 3 b/c obj, background, and methods
-    for i in range (3): 
-        target = '"gsh_csp"'
-        results = results[int(results.find(target)) + len (target):]
-    
-        end = results[len(target):].find(target)
-        print (end)
-        desription = results[:end]
-        print (desription)
+    print (results)
 
-        bodyContent = ""
-        charCount = 0
+    desription = str("")
 
-    # for line in lines:
-    #     if len(str(line.text)) > charCount : 
-    #         bodyContent = line.text
-    #         charCount = len(line.text)
+    subs = ["OBJECTIVE","BACKGROUND","METHODS"]
+    for i in range (3):
+        startTarget = '"gsh_csp"'
 
-    # print (bodyContent)
-    # text_file = open("abstract.txt", "w")
-    # n = text_file.write(bodyContent)
-    # text_file.close()
+        if results.find('"gsp_csp') == -1: 
+            startTarget = '"gsh_small"'
+        endTarget = '</div>'
+        results = results[int(results.find(startTarget)) + len (startTarget) + 1:]
+        end = results[len(startTarget):].find(endTarget) + len (startTarget)
+        desription += subs[i] + ": " + results[:end]
+      
+    return desription
+
 getAbstract("https://scholar.google.com/citations?view_op=view_citation&hl=en&user=G1CnZ38AAAAJ&citation_for_view=G1CnZ38AAAAJ:4JMBOYKVnBMC")

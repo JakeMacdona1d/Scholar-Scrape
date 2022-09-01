@@ -1,6 +1,30 @@
 from serpapi import GoogleSearch
 import json
 from dynamicArr import *
+import requests
+from bs4 import BeautifulSoup
+import time
+
+def getAbstract (url):
+    # Making a GET request
+    r = requests.get(url)
+    print (r)
+
+    # Parsing the HTML
+    soup = BeautifulSoup(r.content, 'html.parser')
+    results = str(soup)
+
+    desription = str("")
+
+    subs = ["OBJECTIVE","BACKGROUND","METHODS"]
+    for i in range (3):
+        startTarget = '"gsh_csp"'
+        endTarget = '</div>'
+        results = results[int(results.find(startTarget)) + len (startTarget) + 1:]
+        end = results[len(startTarget):].find(endTarget) + len (startTarget)
+        desription += subs[i] + ": " + results[:end]
+      
+    return desription
 
 class ArtItem:
     title = "'title': '"
@@ -62,32 +86,3 @@ def divide(text):
     
   print (len(arr))
   return arr
-
-params = {
-  "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3", #os.environ['serapapiKey'],
-    "engine": "google_scholar_author",
-    "author_id": "G1CnZ38AAAAJ",
-    "hl": "en",
-}
-
-
-
-search = GoogleSearch(params)
-results = dict(search.get_dict())
-first = str(results.get('articles'))
-
-
-articles = DynamicArray ()
-strArr = divide(first)
-for i in range(len(strArr)) :
-  # print (strArr[i])
-  item = ArtItem
-  item.setTit(item,strArr[i])
-  item.setLink(item,strArr[i])
-  item.setAuth(item,strArr[i])
-  articles.append(item)
-  print (item.title)
-  print (item.link)
-  print (item.authors)
-
-  # print (item.search(item))
