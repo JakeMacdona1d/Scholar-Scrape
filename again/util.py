@@ -7,6 +7,8 @@ import time
 
 def getAbstract (url):
     # Making a GET request
+    print ("The URL is : ")
+    print (url)
     r = requests.get(url)
     print (r)
 
