@@ -8,7 +8,7 @@ params = {
     "hl": "en",
     "sort": "pubdate",
     "num": "100",
-    "start": "33",
+    "start": "60",
 }
 
 search = GoogleSearch(params)
