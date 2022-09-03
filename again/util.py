@@ -22,7 +22,9 @@ def getAbstract (url):
      
     try:
       if not str(r) == "<Response [200]>" : raise Exception
-    except : print ("We have been found")
+    except : 
+      print ("We have been found")
+      return "found"
 
     # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
