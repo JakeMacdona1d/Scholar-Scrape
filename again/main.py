@@ -7,7 +7,8 @@ params = {
     "author_id": "G1CnZ38AAAAJ",
     "hl": "en",
     "sort": "pubdate",
-    "num": "50",
+    "num": "100",
+    "start": "33",
 }
 
 search = GoogleSearch(params)
@@ -19,7 +20,7 @@ first = str(results.get('articles'))
 strArr = divide(first)
 for i in range(len(strArr)) :
   if i == 0  : continue #b/c weirdness of ds
-  time.sleep(1)
+  time.sleep(10)
   item = ArtItem
   item.setTit(item,strArr[i])
   item.setLink(item,strArr[i])

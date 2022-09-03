@@ -21,11 +21,6 @@ def getAbstract (url):
 
     headers = {'User_Agent':user_agent}
 
-    # proxy = {
-    #     'https' : 'https://130.127.106.29:139',
-    #     'http' : 'https://130.127.106.29:139'
-    # } # ip : 130.127.106.29
-    # # Making a GET request
     r = requests.get(url,headers=headers,)
     
     print (r)
@@ -37,6 +32,14 @@ def getAbstract (url):
     desription = str("")
 
     subs = ["OBJECTIVE","BACKGROUND","METHODS"]
+
+    if results.lower().find('objective') == -1 :
+        subs.remove('OBJECTIVE')
+    if results.lower().find('background') == -1 :
+        subs.remove('BACKGROUND')
+    if results.lower().find('methods') == -1 :
+        subs.remove('METHODS')
+
     for i in range (3):
         startTarget = '"gsh_csp"'
         endTarget = '</div>'
