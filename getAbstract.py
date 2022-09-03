@@ -1,3 +1,6 @@
+#Standalone scraper: input a url adresss, it scrapes. Designed for 
+#pulling descriptions of google scholar article.
+
 import requests
 from bs4 import BeautifulSoup
 import random
@@ -51,8 +54,6 @@ def getAbstract (url):
    
     print (desription)
 
-    bodyContent = ""
-    charCount = 0
 
 link = "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=G1CnZ38AAAAJ&citation_for_view=G1CnZ38AAAAJ:5nxA0vEk-isC"
 getAbstract(link)
