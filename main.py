@@ -1,3 +1,4 @@
+#Jake Macdonald
 # Designed to produce json files with details of all articles authored by choice person.
 #Retrives title, authors, url, and description
 
@@ -11,7 +12,7 @@ def main () :
       "hl": "en",
       "sort": "pubdate",
       "num": "100",
-      "start": "62",
+      "start": "0",
   }
 
   search = GoogleSearch(params)
@@ -21,7 +22,7 @@ def main () :
 
   strArr = divide(first)
   for i in range(len(strArr)) :
-    if i == 0  : continue #b/c weirdness of ds
+    if i == 0  : continue #b/c weirdness of DS
     time.sleep(10)
     item = ArtItem
     item.setTit(item,strArr[i])
@@ -39,11 +40,18 @@ def main () :
     }
     title = item.title
 
-    if len(title) > 15:
-      title = title[:15]
+    sizeOfTitle = len(title)
+    if not sizeOfTitle :
+      title = item.authors 
+      sizeOfTitle = len (title)
 
+    if sizeOfTitle > 15:
+      title = title[:15]
+    
     title = title.replace('"',"")
     title = title.replace('/',"")
+    title = title.replace(' ',"")
+    title += str(sizeOfTitle)
 
     with open('jsonCache/ ' + title +'.json', 'w') as json_file:
       json.dump(dictPort, json_file)  
