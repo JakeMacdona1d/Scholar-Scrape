@@ -53,7 +53,7 @@ def main () :
     title = title.replace(' ',"")
     title += str(sizeOfTitle)
 
-    with open('jsonCache/ ' + title +'.json', 'w') as json_file:
+    with open('datCache/ ' + title +'.json', 'w') as json_file:
       json.dump(dictPort, json_file)  
 
 main()
