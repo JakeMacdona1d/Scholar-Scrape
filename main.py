@@ -6,7 +6,7 @@ from util import *
 import os.path
 
 
-def main () :
+def main (start) :
   params = {
     "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3", #os.environ['serapapiKey'],
       "engine": "google_scholar_author",
@@ -14,7 +14,7 @@ def main () :
       "hl": "en",
       "sort": "pubdate",
       "num": "100",
-      "start": "0",
+      "start": str(start),
   }
 
   search = GoogleSearch(params)
@@ -46,14 +46,12 @@ def main () :
 
     print ('datCache/ ' + fName +'.json')
 
-
+    # Checking if file already exists
     try:
-      with open('datCache/ ' + fName +'.json', 'w') as json_file:
-        print ("woag")
+      with open('datCache/ ' + fName +'.json', 'r') as json_file:
         continue
-        # Do something with the file
     except IOError:
-        print("File not accessible")
+        pass
     finally:
         json_file.close()
 
@@ -77,4 +75,10 @@ def main () :
       json.dump(dictPort, json_file)  
       json_file.close()
 
-main()
+#serpAPI only allows 100 articles to be retrieved per search
+numArt = 130
+iterate = 0
+while (numArt % 100) < numArt : 
+  main(iterate * 100)
+  numArt -= 100
+  iterate += 1
