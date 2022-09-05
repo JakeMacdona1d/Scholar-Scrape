@@ -44,8 +44,6 @@ def main (start) :
     fName = fName.replace(' ',"")
     fName += str(sizeOffName)
 
-    print ('datCache/ ' + fName +'.json')
-
     # Checking if file already exists
     try:
       with open('datCache/ ' + fName +'.json', 'r') as json_file:
@@ -78,7 +76,7 @@ def main (start) :
 #serpAPI only allows 100 articles to be retrieved per search
 numArt = 130
 iterate = 0
-while (numArt % 100) < numArt : 
+while numArt > 0 : 
   main(iterate * 100)
   numArt -= 100
   iterate += 1

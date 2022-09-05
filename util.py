@@ -109,5 +109,4 @@ def divide(text):
     arr.append("'title" + temp[0:found])
     temp = temp[found + len(searchItem):len(temp)-found + len(searchItem)]
     
-  print (len(arr))
   return arr
