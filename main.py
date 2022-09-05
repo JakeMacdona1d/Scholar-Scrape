@@ -12,7 +12,7 @@ def main () :
       "hl": "en",
       "sort": "pubdate",
       "num": "100",
-      "start": "0",
+      "start": "75",
   }
 
   search = GoogleSearch(params)
@@ -23,7 +23,10 @@ def main () :
   strArr = divide(first)
   for i in range(len(strArr)) :
     if i == 0  : continue #b/c weirdness of DS
-    time.sleep(10)
+
+    baseTime = 10.0
+    time.sleep(baseTime + (baseTime * random.random()))
+
     item = ArtItem
     item.setTit(item,strArr[i])
     item.setLink(item,strArr[i])
