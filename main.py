@@ -3,6 +3,8 @@
 #Retrives title, authors, url, and description
 
 from util import *
+import os.path
+
 
 def main () :
   params = {
@@ -12,7 +14,7 @@ def main () :
       "hl": "en",
       "sort": "pubdate",
       "num": "100",
-      "start": "75",
+      "start": "0",
   }
 
   search = GoogleSearch(params)
@@ -24,14 +26,42 @@ def main () :
   for i in range(len(strArr)) :
     if i == 0  : continue #b/c weirdness of DS
 
-    baseTime = 10.0
-    time.sleep(baseTime + (baseTime * random.random()))
-
     item = ArtItem
     item.setTit(item,strArr[i])
     item.setLink(item,strArr[i])
     item.setAuth(item,strArr[i])
-    print (item.link)
+
+    fName = item.title
+    sizeOffName = len(fName)
+    if not sizeOffName :
+      fName = item.authors 
+      sizeOffName = len (fName)
+    if sizeOffName > 15:
+      fName = fName[:15]
+
+    fName = fName.replace('"',"")
+    fName = fName.replace('/',"")
+    fName = fName.replace(' ',"")
+    fName += str(sizeOffName)
+
+    print ('datCache/ ' + fName +'.json')
+
+
+    try:
+      with open('datCache/ ' + fName +'.json', 'w') as json_file:
+        print ("woag")
+        continue
+        # Do something with the file
+    except IOError:
+        print("File not accessible")
+    finally:
+        json_file.close()
+
+   
+    
+    baseTime = 10.0
+    time.sleep(baseTime + (baseTime * random.random()))
+
     item.abstract = getAbstract(str(item.link)) 
     if item.abstract == 'found' : return
 
@@ -41,22 +71,10 @@ def main () :
       'link' : item.link,
       'abstract' : item.abstract
     }
-    title = item.title
 
-    sizeOfTitle = len(title)
-    if not sizeOfTitle :
-      title = item.authors 
-      sizeOfTitle = len (title)
 
-    if sizeOfTitle > 15:
-      title = title[:15]
-    
-    title = title.replace('"',"")
-    title = title.replace('/',"")
-    title = title.replace(' ',"")
-    title += str(sizeOfTitle)
-
-    with open('datCache/ ' + title +'.json', 'w') as json_file:
+    with open('datCache/ ' + fName +'.json', 'w') as json_file:
       json.dump(dictPort, json_file)  
+      json_file.close()
 
 main()
