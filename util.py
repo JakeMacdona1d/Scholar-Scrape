@@ -5,7 +5,17 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import random
+import os
 
+def addToMaster (readFileName, FILE) :
+  if ".json" in readFileName :
+    f = open(readFileName, "r")
+    addition = str(f.read())
+    addition = addition.replace('"title"','title')
+    addition = addition.replace('"authors"','authors')
+    addition = addition.replace('"link"','link')
+    addition = addition.replace('"abstract"','abstract')
+    FILE.write(addition + ",\n")
 
 def getAbstract (url):
     user_agent_list = [

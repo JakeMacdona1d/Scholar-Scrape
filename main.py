@@ -1,4 +1,5 @@
-#Jake Macdonald
+#Jake Macdonald 
+# 9/23/2022
 # Designed to produce json files with details of all articles authored by choice person.
 #Retrives title, authors, url, and description
 
@@ -47,12 +48,10 @@ def main (start) :
     # Checking if file already exists
     try:
       with open('datCache/ ' + fName +'.json', 'r') as json_file:
+        json_file.close()
         continue
     except IOError:
         pass
-    finally:
-        json_file.close()
-
    
     
     baseTime = 10.0
@@ -73,10 +72,24 @@ def main (start) :
       json.dump(dictPort, json_file)  
       json_file.close()
 
+    return 404
+
 #serpAPI only allows 100 articles to be retrieved per search
 numArt = 130
 iterate = 0
+recompile = False
 while numArt > 0 : 
-  main(iterate * 100)
+  if not main(iterate * 100) == None:
+    recompile = True 
   numArt -= 100
   iterate += 1
+
+if recompile :
+  path = "datCache"
+  dir_list = os.listdir(path)
+  new = open("publications.js", "w")
+  new.write("publications = [\n")
+  for i in dir_list :
+      addToMaster (path +'/'+i, new)
+  new.write("];")
+
