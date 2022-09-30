@@ -11,7 +11,7 @@ def main (start) :
   params = {
     "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3", #os.environ['serapapiKey'],
       "engine": "google_scholar_author",
-      "author_id": "G1CnZ38AAAAJ",
+      "author_id": "G1CnZ38AAAAJ", #Nathan's Id
       "hl": "en",
       "sort": "pubdate",
       "num": "100",
@@ -33,17 +33,17 @@ def main (start) :
     item.setAuth(item,strArr[i])
 
     fName = item.title
-    sizeOffName = len(fName)
-    if not sizeOffName :
+    sizeOfName = len(fName)
+    if not sizeOfName :
       fName = item.authors 
-      sizeOffName = len (fName)
-    if sizeOffName > 15:
+      sizeOfName = len (fName)
+    if sizeOfName > 15:
       fName = fName[:15]
 
     fName = fName.replace('"',"")
     fName = fName.replace('/',"")
     fName = fName.replace(' ',"")
-    fName += str(sizeOffName)
+    fName += str(sizeOfName)
 
     # Checking if file already exists
     try:
@@ -57,7 +57,7 @@ def main (start) :
     baseTime = 10.0
     time.sleep(baseTime + (baseTime * random.random()))
 
-    item.abstract = getAbstract(str(item.link),item.authors) 
+    (item.abstract, item.authors) = getAbstract(str(item.link),item.authors) 
     if item.abstract == 'found' : return
 
     dictPort = {

@@ -12,7 +12,6 @@ def reduce (name) :
         name = name[name.find(' ')+1:]
     return name
 
-
 def getFull (search, input) :
     print (search)
     if str(search).find(input) == -1 : return None
@@ -103,7 +102,7 @@ def getAbstract (url, auths):
     
     print (betterAuthNames (auths,forNames))
 
-    return desription, betterAuthNames((auths,forNames))
+    return desription, betterAuthNames(auths,forNames)
 
 class ArtItem:
     title = "'title': '"
@@ -129,13 +128,16 @@ class ArtItem:
       self.searchP["q"] = str(self.link)
 
     def setTit (self,text):
-      searchStartItem = "'title': '"
+      text = text.replace('"',"'")
+      print (text)
+      searchStartItem = "'title': "
       searchEndItem = "', '"
       start = text.find (searchStartItem) 
       end = text[start:].find (searchEndItem)
       self.title = text[start:end + start]
       self.title = str(self.title).replace("'",'')
       self.title = str(self.title).replace("title: ",'')
+      print ('\n' + self.title + '\n')
 
     
     def setAuth (self,text):
