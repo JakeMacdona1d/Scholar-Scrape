@@ -13,7 +13,6 @@ def reduce (name) :
     return name
 
 def getFull (search, input) :
-    print (search)
     if str(search).find(input) == -1 : return None
     endIndex = str(search).find(input) + len(input) -1
 
@@ -64,7 +63,7 @@ def getAbstract (url, auths):
       if not str(r) == "<Response [200]>" : raise Exception
     except : 
       print ("We have been found")
-      return "found"
+      return "found", "found"
 
     # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -73,7 +72,6 @@ def getAbstract (url, auths):
     searchItem = ">Authors</div><div class"
     startIndex = str(soup2).find(searchItem)
     forNames = str(soup2)[startIndex: startIndex + (len(auths.split(','))*25) + len(searchItem) * 3]
-    print (forNames)
     results = str(soup)
 
     desription = str("")
@@ -93,16 +91,20 @@ def getAbstract (url, auths):
         if results.find(startTarget) == -1 :
           startTarget = '"gsh_small"'
           if results.find(startTarget) == -1 :
-            return "no abstract"
+            desription = "no abstract"
+            break
 
         endTarget = '</div>'
         results = results[int(results.find(startTarget)) + len (startTarget) + 1:]
         end = results[len(startTarget):].find(endTarget) + len (startTarget)
         desription += subs[i] + ": " + results[:end]
     
-    print (betterAuthNames (auths,forNames))
 
-    return desription, betterAuthNames(auths,forNames)
+    print ("thoterus")
+    print (desription)
+
+    print (str(betterAuthNames(auths,forNames)))
+    return (desription, str(betterAuthNames(auths,forNames)))
 
 class ArtItem:
     title = "'title': '"
@@ -118,6 +120,7 @@ class ArtItem:
     }
 
     def setLink (self,text):
+      text = text.replace('"',"'")
       searchStartItem = "'link': '"
       searchEndItem = "', '"
       start = text.find (searchStartItem) 
@@ -129,7 +132,6 @@ class ArtItem:
 
     def setTit (self,text):
       text = text.replace('"',"'")
-      print (text)
       searchStartItem = "'title': "
       searchEndItem = "', '"
       start = text.find (searchStartItem) 
@@ -141,6 +143,7 @@ class ArtItem:
 
     
     def setAuth (self,text):
+      text = text.replace('"',"'")
       searchStartItem = "'authors': '"
       searchEndItem = "', '"
       start = text.find (searchStartItem) 
