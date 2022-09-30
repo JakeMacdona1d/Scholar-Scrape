@@ -14,19 +14,19 @@ def reduce (name) :
 
 
 def getFull (search, input) :
+    print (search)
     if str(search).find(input) == -1 : return None
     endIndex = str(search).find(input) + len(input) -1
 
     output = ""
     i = endIndex
-    while not (search[i] == ',' or i < 0) :
+    while not (search[i] == ',' or i < 0 or search[i] == '>') :
         output = search[i] + output
         i -= 1
     return output.strip()
 
 def betterAuthNames(abname, content) :
     names = abname.split(',')
-    print (names)
     product = ""
     for i in names :
         lastN = reduce(i)
@@ -69,6 +69,12 @@ def getAbstract (url, auths):
 
     # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
+    soup2 = BeautifulSoup(r.text, 'html.parser')
+    
+    searchItem = ">Authors</div><div class"
+    startIndex = str(soup2).find(searchItem)
+    forNames = str(soup2)[startIndex: startIndex + (len(auths.split(','))*25) + len(searchItem) * 3]
+    print (forNames)
     results = str(soup)
 
     desription = str("")
@@ -95,9 +101,9 @@ def getAbstract (url, auths):
         end = results[len(startTarget):].find(endTarget) + len (startTarget)
         desription += subs[i] + ": " + results[:end]
     
-    betterAuthNames (auths,results)
+    print (betterAuthNames (auths,forNames))
 
-    return desription
+    return desription, betterAuthNames((auths,forNames))
 
 class ArtItem:
     title = "'title': '"

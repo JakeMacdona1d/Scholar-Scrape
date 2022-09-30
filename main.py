@@ -57,7 +57,7 @@ def main (start) :
     baseTime = 10.0
     time.sleep(baseTime + (baseTime * random.random()))
 
-    item.abstract = getAbstract(str(item.link),item.authors.split(',')) 
+    item.abstract = getAbstract(str(item.link),item.authors) 
     if item.abstract == 'found' : return
 
     dictPort = {
