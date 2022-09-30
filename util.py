@@ -7,12 +7,36 @@ import time
 import random
 import os
 
-def onlyLast (name) :
-  print (name)
-  while str(name).find(' ') :
-    name = name[str(name).find(' '):]
-    print (name)
-  return name
+def reduce (name) :
+    while not name.find(' ') == -1 :
+        name = name[name.find(' ')+1:]
+    return name
+
+
+def getFull (search, input) :
+    if str(search).find(input) == -1 : return None
+    endIndex = str(search).find(input) + len(input) -1
+
+    output = ""
+    i = endIndex
+    while not (search[i] == ',' or i < 0) :
+        output = search[i] + output
+        i -= 1
+    return output.strip()
+
+def betterAuthNames(abname, content) :
+    names = abname.split(',')
+    print (names)
+    product = ""
+    for i in names :
+        lastN = reduce(i)
+        extendedName = getFull(content, lastN)
+        if extendedName == None :
+            product += i + ', '
+        else : product += (getFull(content, lastN)) + ', '
+
+    product = product [:len(product)-2]
+    return product
 
 def addToMaster (readFileName, FILE) :
   if ".json" in readFileName :
@@ -25,12 +49,6 @@ def addToMaster (readFileName, FILE) :
     FILE.write(addition + ",\n")
 
 def getAbstract (url, auths):
-    newAuths = auths
-    print (auths) 
-    for i in auths :
-      i = onlyLast(i)
-      print (i)
-    print (auths)
     user_agent_list = [
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
@@ -76,7 +94,9 @@ def getAbstract (url, auths):
         results = results[int(results.find(startTarget)) + len (startTarget) + 1:]
         end = results[len(startTarget):].find(endTarget) + len (startTarget)
         desription += subs[i] + ": " + results[:end]
-      
+    
+    betterAuthNames (auths,results)
+
     return desription
 
 class ArtItem:
