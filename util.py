@@ -7,17 +7,30 @@ import time
 import random
 import os
 
+def onlyLast (name) :
+  print (name)
+  while str(name).find(' ') :
+    name = name[str(name).find(' '):]
+    print (name)
+  return name
+
 def addToMaster (readFileName, FILE) :
   if ".json" in readFileName :
     f = open(readFileName, "r")
     addition = str(f.read())
     addition = addition.replace('"title"','title')
-    addition = addition.replace('"authors"','authors')
+    addition = addition.replace('"authors"','author')
     addition = addition.replace('"link"','link')
     addition = addition.replace('"abstract"','abstract')
     FILE.write(addition + ",\n")
 
-def getAbstract (url):
+def getAbstract (url, auths):
+    newAuths = auths
+    print (auths) 
+    for i in auths :
+      i = onlyLast(i)
+      print (i)
+    print (auths)
     user_agent_list = [
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',

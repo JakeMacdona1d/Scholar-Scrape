@@ -57,7 +57,7 @@ def main (start) :
     baseTime = 10.0
     time.sleep(baseTime + (baseTime * random.random()))
 
-    item.abstract = getAbstract(str(item.link)) 
+    item.abstract = getAbstract(str(item.link),item.authors.split(',')) 
     if item.abstract == 'found' : return
 
     dictPort = {
@@ -84,6 +84,7 @@ while numArt > 0 :
   numArt -= 100
   iterate += 1
 
+#used to make a single js file with all objects defined in the json files
 if recompile :
   path = "datCache"
   dir_list = os.listdir(path)
