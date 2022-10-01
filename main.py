@@ -7,14 +7,14 @@ from util import *
 import os.path
 
 
-def main (start) :
+def main (start, numItems) :
   params = {
     "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3", #os.environ['serapapiKey'],
       "engine": "google_scholar_author",
       "author_id": "G1CnZ38AAAAJ", #Nathan's Id
       "hl": "en",
       "sort": "pubdate",
-      "num": "100",
+      "num": numItems,
       "start": str(start),
   }
 
@@ -57,16 +57,15 @@ def main (start) :
     baseTime = 10.0
     time.sleep(baseTime + (baseTime * random.random()))
 
-    print (item.authors)
-
-    (item.abstract, item.authors) = getAbstract(str(item.link),str(item.authors)) 
+    (item.abstract, item.authors, item.date) = getContent(str(item.link),str(item.authors)) 
     if item.abstract == 'found' : return
 
     dictPort = {
       'title' : item.title, 
       'authors' : item.authors,
       'link' : item.link,
-      'abstract' : item.abstract
+      'abstract' : item.abstract,
+      'date' : item.date
     }
 
 
@@ -74,16 +73,17 @@ def main (start) :
       json.dump(dictPort, json_file)  
       json_file.close()
 
-    return 404
+  return 1
 
 #serpAPI only allows 100 articles to be retrieved per search
+numItems = 100
 numArt = 130
 iterate = 0
 recompile = False
 while numArt > 0 : 
-  if not main(iterate * 100) == None:
+  if not main(iterate * numItems, numItems) == None:
     recompile = True 
-  numArt -= 100
+  numArt -= numItems
   iterate += 1
 
 #used to make a single js file with all objects defined in the json files

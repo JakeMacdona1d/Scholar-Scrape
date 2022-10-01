@@ -7,6 +7,19 @@ import time
 import random
 import os
 
+def getDate (content) :
+  lookItem = "Publication date"
+  start = str(content).find(lookItem) + len(lookItem)
+  content = content[start:]
+  lookItem = 'gsc_oci_value">'
+  start = str(content).find(lookItem) + len(lookItem)
+  content = content[start:]
+  lookItem = '<'
+  end = str(content).find(lookItem)
+  return content[:end]
+
+#Reduce given abrev name to just last name. 
+#Useful as search item.
 def reduce (name) :
     while not name.find(' ') == -1 :
         name = name[name.find(' ')+1:]
@@ -36,6 +49,7 @@ def betterAuthNames(abname, content) :
     product = product [:len(product)-2]
     return product
 
+# For making single repo of article data
 def addToMaster (readFileName, FILE) :
   if ".json" in readFileName :
     f = open(readFileName, "r")
@@ -44,9 +58,12 @@ def addToMaster (readFileName, FILE) :
     addition = addition.replace('"authors"','author')
     addition = addition.replace('"link"','link')
     addition = addition.replace('"abstract"','abstract')
+    addition = addition.replace('"date"','date')
+
     FILE.write(addition + ",\n")
 
-def getAbstract (url, auths):
+def getContent (url, auths): 
+    #helps with not being blocked by scholar
     user_agent_list = [
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
@@ -63,7 +80,7 @@ def getAbstract (url, auths):
       if not str(r) == "<Response [200]>" : raise Exception
     except : 
       print ("We have been found")
-      return "found", "found"
+      return "found", "found", "found"
 
     # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -91,36 +108,25 @@ def getAbstract (url, auths):
         if results.find(startTarget) == -1 :
           startTarget = '"gsh_small"'
           if results.find(startTarget) == -1 :
-            desription = "no abstract"
             break
 
         endTarget = '</div>'
         results = results[int(results.find(startTarget)) + len (startTarget) + 1:]
         end = results[len(startTarget):].find(endTarget) + len (startTarget)
         desription += subs[i] + ": " + results[:end]
-    
 
-    print ("thoterus")
-    print (desription)
+    return (desription, str(betterAuthNames(auths,forNames)),str(getDate(str(soup2))))
 
-    print (str(betterAuthNames(auths,forNames)))
-    return (desription, str(betterAuthNames(auths,forNames)))
-
+# container for elements of Google Scholar articles 
 class ArtItem:
     title = "'title': '"
     link = "'link': '"
     authors = "'authors': '"
     abstract = ""
-
-    searchP = {
-    "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3", #os.environ['serapapiKey'],
-    "engine": "google_scholar_author",
-    "q": "",
-    "hl": "en",
-    }
+    date = ""
 
     def setLink (self,text):
-      text = text.replace('"',"'")
+      text = text.replace('"',"'") #needed b/c inconsistent html formats
       searchStartItem = "'link': '"
       searchEndItem = "', '"
       start = text.find (searchStartItem) 
@@ -128,7 +134,6 @@ class ArtItem:
       self.link = text[start:end + start]
       self.link = str(self.link).replace("'",'')
       self.link = str(self.link).replace('link: ','')
-      self.searchP["q"] = str(self.link)
 
     def setTit (self,text):
       text = text.replace('"',"'")
@@ -139,7 +144,6 @@ class ArtItem:
       self.title = text[start:end + start]
       self.title = str(self.title).replace("'",'')
       self.title = str(self.title).replace("title: ",'')
-      print ('\n' + self.title + '\n')
 
     
     def setAuth (self,text):
@@ -152,6 +156,7 @@ class ArtItem:
       self.authors = str(self.authors).replace("'",'')
       self.authors = str(self.authors).replace("authors: ",'')
 
+# to isolate all articles discovered in SerapAPI search
 def divide(text):
   temp = text
   arr = DynamicArray ()
