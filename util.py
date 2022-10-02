@@ -23,19 +23,6 @@ def authorFormat (content) :
   prod += '@c}]@b'
   return prod
 
-def dateFormat (content) :
-  # in converting dict to json with dump char " becomes \"
-  # which is bad. So @c is replaced with " when reading
-  # to fix this. Also @b is endpoint, flags pos to remove 
-  #end and init quote
-  return '@b{@cdate-parts@c:[[@c'+content+'@c]]}@b'
-
-  
-  
-  prod += '@c}@b'
-  return prod
-
-
 def getDate (content) :
   lookItem = "Publication date"
   start = str(content).find(lookItem) + len(lookItem)
@@ -85,7 +72,7 @@ def betterAuthNames(abname, content) :
         lastN = reduce(i)
         extendedName = getFull(content, lastN)
         if extendedName == None :
-            product += i + ', '
+            continue # may add additional means to find names later
         else : product += (getFull(content, lastN)) + ', '
 
     product = product [:len(product)-2]

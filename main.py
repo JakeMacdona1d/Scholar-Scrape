@@ -58,7 +58,7 @@ def main (start, numItems) :
     time.sleep(baseTime + (baseTime * random.random()))
 
     (item.abstract, item.authors, item.date) = getContent(str(item.link),str(item.authors)) 
-    if item.abstract == 'found' : return
+    if item.abstract == 'found' : return 404
 
     item.authors = authorFormat(item.authors)
 
@@ -76,7 +76,7 @@ def main (start, numItems) :
   return 1
 
 #serpAPI only allows 100 articles to be retrieved per search
-numItems = 100
+numItems = 10
 numArt = 130
 iterate = 0
 recompile = False
