@@ -61,7 +61,6 @@ def main (start, numItems) :
     if item.abstract == 'found' : return
 
     item.authors = authorFormat(item.authors)
-    print (item.authors)
 
     dictPort = {
       'title' : item.title, 
@@ -74,7 +73,6 @@ def main (start, numItems) :
     with open('datCache/ ' + fName +'.json', 'w') as json_file:
       json.dump(dictPort, json_file)  
       json_file.close()
-    return 69
   return 1
 
 #serpAPI only allows 100 articles to be retrieved per search
