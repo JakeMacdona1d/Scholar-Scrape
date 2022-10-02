@@ -53,26 +53,28 @@ def main (start, numItems) :
     except IOError:
         pass
    
-    
+    # An attempt to make crawling less bot seeming
     baseTime = 10.0
     time.sleep(baseTime + (baseTime * random.random()))
 
     (item.abstract, item.authors, item.date) = getContent(str(item.link),str(item.authors)) 
     if item.abstract == 'found' : return
 
+    item.authors = authorFormat(item.authors)
+    print (item.authors)
+
     dictPort = {
       'title' : item.title, 
-      'authors' : item.authors,
-      'link' : item.link,
+      'author' : item.authors,
+      'URL' : item.link,
       'abstract' : item.abstract,
-      'date' : item.date
+      'issued' : item.date
     }
-
 
     with open('datCache/ ' + fName +'.json', 'w') as json_file:
       json.dump(dictPort, json_file)  
       json_file.close()
-
+    return 69
   return 1
 
 #serpAPI only allows 100 articles to be retrieved per search

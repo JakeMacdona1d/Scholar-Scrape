@@ -7,6 +7,35 @@ import time
 import random
 import os
 
+def authorFormat (content) :
+  # in converting dict to json with dump char " becomes \"
+  # This is bad. So @c is replaced with " when reading
+  # to fix this. Also @b is endpoint, flags pos to remove 
+  #end and init quote
+  prod = '@b[{'
+
+  for i in content :
+    if i == ',' :
+      prod += '@c},{'
+    else :
+      prod += i
+  
+  prod += '@c}]@b'
+  return prod
+
+def dateFormat (content) :
+  # in converting dict to json with dump char " becomes \"
+  # which is bad. So @c is replaced with " when reading
+  # to fix this. Also @b is endpoint, flags pos to remove 
+  #end and init quote
+  return '@b{@cdate-parts@c:[[@c'+content+'@c]]}@b'
+
+  
+  
+  prod += '@c}@b'
+  return prod
+
+
 def getDate (content) :
   lookItem = "Publication date"
   start = str(content).find(lookItem) + len(lookItem)
@@ -16,6 +45,19 @@ def getDate (content) :
   content = content[start:]
   lookItem = '<'
   end = str(content).find(lookItem)
+
+  date = content[:end]
+
+  # to just get year
+  count = 0
+  for i in range (len(date)) :
+    if date[i].isdigit() :
+      count += 1
+      if count == 4 :
+        # for formatting purposes
+        return '@b{@cdate-parts@c:[[@c'+date[i-3:i+1]+'@c]]}@b'
+    else : count = 0
+
   return content[:end]
 
 #Reduce given abrev name to just last name. 
@@ -34,7 +76,7 @@ def getFull (search, input) :
     while not (search[i] == ',' or i < 0 or search[i] == '>') :
         output = search[i] + output
         i -= 1
-    return output.strip()
+    return "@cgiven@c: @c" + output.strip()
 
 def betterAuthNames(abname, content) :
     names = abname.split(',')
@@ -54,11 +96,18 @@ def addToMaster (readFileName, FILE) :
   if ".json" in readFileName :
     f = open(readFileName, "r")
     addition = str(f.read())
-    addition = addition.replace('"title"','title')
-    addition = addition.replace('"authors"','author')
-    addition = addition.replace('"link"','link')
-    addition = addition.replace('"abstract"','abstract')
-    addition = addition.replace('"date"','date')
+    # addition = addition.replace('"title"','title')
+    # addition = addition.replace('"author"','author')
+    # addition = addition.replace('author: "','author: ')
+
+    # addition = addition.replace('"URL"','URL')
+    # addition = addition.replace('"abstract"','abstract')
+    # addition = addition.replace('"date"','date')
+
+    addition = addition.replace('@b"','')
+    addition = addition.replace('"@b','')
+
+    addition = addition.replace('@c','"')
 
     FILE.write(addition + ",\n")
 
