@@ -7,6 +7,8 @@ import time
 import random
 import os
 
+ignoreSym = "@ignore@"
+
 def authorFormat (content) :
   # in converting dict to json with dump char " becomes \"
   # This is bad. So @c is replaced with " when reading
@@ -25,7 +27,11 @@ def authorFormat (content) :
 
 def getDate (content) :
   lookItem = "Publication date"
+  if str(content).find(lookItem) == -1 : 
+    return ignoreSym
+
   start = str(content).find(lookItem) + len(lookItem)
+
   content = content[start:]
   lookItem = 'gsc_oci_value">'
   start = str(content).find(lookItem) + len(lookItem)
@@ -72,8 +78,8 @@ def betterAuthNames(abname, content) :
         lastN = reduce(i)
         extendedName = getFull(content, lastN)
         if extendedName == None :
-            continue # may add additional means to find names later
-        else : product += (getFull(content, lastN)) + ', '
+             continue # may add additional means to find names later
+        else : product += extendedName + ', '
 
     product = product [:len(product)-2]
     return product
@@ -83,13 +89,12 @@ def addToMaster (readFileName, FILE) :
   if ".json" in readFileName :
     f = open(readFileName, "r")
     addition = str(f.read())
-    # addition = addition.replace('"title"','title')
-    # addition = addition.replace('"author"','author')
-    # addition = addition.replace('author: "','author: ')
 
-    # addition = addition.replace('"URL"','URL')
-    # addition = addition.replace('"abstract"','abstract')
-    # addition = addition.replace('"date"','date')
+    if not addition.find(ignoreSym) == -1 : return
+
+    # for some articles, are getting ... as a name. 
+    # Suppose related to use of SerapAPI
+    addition = addition.replace(',{  ..."}','')
 
     addition = addition.replace('@b"','')
     addition = addition.replace('"@b','')

@@ -59,6 +59,7 @@ def main (start, numItems) :
 
     (item.abstract, item.authors, item.date) = getContent(str(item.link),str(item.authors)) 
     if item.abstract == 'found' : return 404
+    if item.date == "ignore" : continue
 
     item.authors = authorFormat(item.authors)
 
