@@ -6,7 +6,6 @@
 from util import *
 import os.path
 
-
 def main (start, numItems) :
   params = {
     "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3", #os.environ['serapapiKey'],
@@ -95,5 +94,6 @@ if recompile :
   new.write("publications = [\n")
   for i in dir_list :
       addToMaster (path +'/'+i, new)
-  new.write("];")
+  back = open("oldPub.txt", "r")
+  new.write(back.read())
 
