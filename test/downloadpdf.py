@@ -1,35 +1,32 @@
-# Import libraries
 import requests
-from bs4 import BeautifulSoup
 
-# URL from which pdfs to be downloaded
-url = "https://www.geeksforgeeks.org/how-to-extract-pdf-tables-in-python/"
 
-# Requests URL and get response object
-response = requests.get(url)
+def download_pdf(url, file_name, headers):
 
-# Parse text obtained
-soup = BeautifulSoup(response.text, 'html.parser')
+    # Send GET request
+    response = requests.get(url, headers=headers)
 
-# Find all hyperlinks present on webpage
-links = soup.find_all('a')
+    # Save the PDF
+    if response.status_code == 200:
+        with open(file_name, "wb") as f:
+            f.write(response.content)
+    else:
+        print(response.status_code)
 
-i = 0
 
-# From all links check for pdf link and
-# if present download file
-for link in links:
-	if ('.pdf' in link.get('href', [])):
-		i += 1
-		print("Downloading file: ", i)
 
-		# Get response object for link
-		response = requests.get(link.get('href'))
+if __name__ == "__main__":
 
-		# Write content in pdf file
-		pdf = open("pdf"+str(i)+".pdf", 'wb')
-		pdf.write(response.content)
-		pdf.close()
-		print("File ", i, " downloaded")
+    # Define HTTP Headers
+    headers = {
+        "User-Agent": "Chrome/51.0.2704.103",
+    }
 
-print("All PDF files downloaded")
+    # Define URL of an image
+    url = "https://pyshark.com/wp-content/uploads/2022/05/merged_all_pages.pdf"
+
+    # Define image file name
+    file_name = "file1.pdf"
+
+    # Download image
+    download_pdf(url, file_name, headers)

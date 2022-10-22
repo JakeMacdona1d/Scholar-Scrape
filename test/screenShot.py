@@ -11,11 +11,11 @@ import time
 
 
 root = tkinter.Tk()
-width = root.winfo_screenwidth()
+width = root.winfo_screenwidth() / 2
 height = root.winfo_screenheight()
-time.sleep(3)
+# time.sleep(3)
 # take screenshot using pyautogui
-os.system('start "" /max "input.pdf"')
+# os.system('start "" /max "input.pdf"')
 
 image = pyautogui.screenshot()
 

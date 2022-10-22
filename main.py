@@ -3,7 +3,7 @@
 # Designed to produce json files with details of all articles authored by choice person.
 #Retrives title, authors, url, and description
 
-from util import *
+from utilities.util import *
 import os.path
 
 def main (start, numItems) :
@@ -90,10 +90,10 @@ while numArt > 0 :
 if recompile :
   path = "datCache"
   dir_list = os.listdir(path)
-  new = open("publications.js", "w")
+  new = open("output/publications.js", "w")
   new.write("publications = [\n")
   for i in dir_list :
       addToMaster (path +'/'+i, new)
-  back = open("oldPub.txt", "r") 
+  back = open("output/oldPub.txt", "r")
   new.write(back.read())
 

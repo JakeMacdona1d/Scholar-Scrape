@@ -1,5 +1,6 @@
 import ctypes
 
+# Using this because I wanted to use a familiar data structure
 class DynamicArray(object):
 	'''
 	DYNAMIC ARRAY CLASS (Similar to Python List)
