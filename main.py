@@ -94,6 +94,6 @@ if recompile :
   new.write("publications = [\n")
   for i in dir_list :
       addToMaster (path +'/'+i, new)
-  back = open("oldPub.txt", "r")
+  back = open("oldPub.txt", "r") 
   new.write(back.read())
 
