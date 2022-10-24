@@ -5,6 +5,8 @@ import os
 import time
 import webbrowser
 from bs4 import BeautifulSoup
+import matplotlib.image as img
+import numpy as np
 
 
 def openWebPage (url) :
@@ -23,8 +25,22 @@ def screenShot(directory, name) :
     height = root.winfo_screenheight()
 
     #getting half width b/c webPage opens as half screen on right side
-    im=ImageGrab.grab(bbox=(int(width/2),0,width,height))
+    im=ImageGrab.grab(bbox=(0,0,width,height))
     im.save("output.jpg")
+
+    #The theme of edge has been set to the unique color of salmon hex #fd70a1
+    # rgb (253,112,161) 
+
+    matrix = img.imread("output.jpg")
+
+    for i in matrix :
+        for j in i :
+            if j == ([50,50,50]) :
+                print (j)
+
+    # print (matrix)
+
+
 
 
 
