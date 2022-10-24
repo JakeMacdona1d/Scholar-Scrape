@@ -18,28 +18,88 @@ def openWebPage (url) :
     webbrowser.get('edge').open(url)
 
 
+def similarRGB (key, input, percentAccept) :
+    for i in range(len(key)) :
+            if percentAccept < ((abs(key[i]-input[i])) / key[i]) :
+                return False
+    return True
 
+def homogenusArea (key, matrix, tolerance,checkSpace, posx, posy) :
+    avg = 0
+    stopped = False
+    omited = 0
+    for k in range(2*checkSpace) :
+        try : 
+            if not similarRGB(key, list(matrix[posx-checkSpace + k,posy-checkSpace + k]), tolerance) :
+                avg += 1
+                if avg / ((2*checkSpace) - omited) > tolerance: 
+                    stopped = True
+                    break
+        except: omited += 1
+    if not stopped : 
+        return True
+    return False
+
+def getAxes(key, tolerance, domain, width, height) : 
+    matrix = img.imread("output.jpg")
+
+    x1 = y = xf = y2 = -1
+    #gets a pixel in color tolerance of key
+    #then sees if surounding area is tolerable 
+    for i in range(len(matrix)) :
+        for j in range(len(matrix[i])) :
+            if similarRGB(key, list(matrix[i,j]), tolerance):
+                if not x1 == -1: 
+                    if not xf == -1 : return (x1, y, xf, yf)
+
+                checkSpace = int((height * width) * domain)
+                if x1 == -1 :
+                    if homogenusArea(key,matrix,tolerance,checkSpace,i,j) :
+                        x1 = j
+                        y = i 
+                if xf == -1 :
+                    if homogenusArea(key,matrix,tolerance,checkSpace,width - i, height -j) :
+                        xf = width - i
+                        yf = height - j
+                              
+    return (0,0,0,0)
+
+
+# Assumes edge theme has been set correctly to bubblegum
 def screenShot(directory, name) :
     root = tkinter.Tk()
     width = root.winfo_screenwidth()
     height = root.winfo_screenheight()
 
-    #getting half width b/c webPage opens as half screen on right side
     im=ImageGrab.grab(bbox=(0,0,width,height))
     im.save("output.jpg")
 
-    #The theme of edge has been set to the unique color of salmon hex #fd70a1
+    #The theme of edge has been set to the unique color of bubblegum hex #fd70a1
     # rgb (253,112,161) 
+    key = [253,112,161]
 
-    matrix = img.imread("output.jpg")
+    tolerance = .1
+    domain = .01
+    x = y = xf = yf = 0
 
-    for i in matrix :
-        for j in i :
-            if j == ([50,50,50]) :
-                print (j)
+    (x,y,xf,yf) = getAxes(key,tolerance,domain, width, height)
+    print (x,y,xf,yf)
 
-    # print (matrix)
+    im=ImageGrab.grab(bbox=(x,y,xf,height))
+    im.save("output.jpg")
 
+    key = [0,0,0]
+    init = [x,y,-xf,-yf]
+    (x,y,xf,yf) = getAxes(key,tolerance,domain, xf, height)
+    x += init[0]
+    y += init[1]
+    xf += init[2]
+    yf += init[3]
+
+    print (x,y,xf,yf)
+
+    im=ImageGrab.grab(bbox=(x,y,xf,yf))
+    im.save("output.jpg")
 
 
 
