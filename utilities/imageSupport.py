@@ -19,52 +19,71 @@ def openWebPage (url) :
 
 
 def similarRGB (key, input, percentAccept) :
+    maxrgb = 255
     for i in range(len(key)) :
-            if percentAccept < ((abs(key[i]-input[i])) / key[i]) :
+            if percentAccept < (abs((key[i]/maxrgb) - (input[i]/maxrgb))) :
                 return False
     return True
 
-def homogenusArea (key, matrix, tolerance,checkSpace, posx, posy) :
+def homogenusArea (key, matrix, tolerance,checkSpace, posx, posy, width, height) :
     avg = 0
     stopped = False
-    omited = 0
-    for k in range(2*checkSpace) :
-        try : 
-            if not similarRGB(key, list(matrix[posx-checkSpace + k,posy-checkSpace + k]), tolerance) :
-                avg += 1
-                if avg / ((2*checkSpace) - omited) > tolerance: 
-                    stopped = True
-                    break
-        except: omited += 1
-    if not stopped : 
-        return True
+
+    count = 1
+    direction = 1
+
+    while checkSpace > count :
+        for i in range(count) :
+            if posx > width or posx < 0 : return False
+            if posy > height or posy < 0 : return False
+
+            try : 
+                posy += direction
+                if not similarRGB(key, list(matrix[posx ,posy]), tolerance) :
+                    avg += 1
+            except: avg += 1
+
+            try : 
+                posx += direction
+                if not similarRGB(key, list(matrix[posx ,posy]), tolerance) :
+                    avg += 1
+            except: avg += 1
+
+            direction *= -1
+            count += 1
+
+            if avg / ((checkSpace)) > tolerance: 
+                        stopped = True
+                        break
+        if not stopped : 
+            return True
     return False
 
 def getAxes(key, tolerance, domain, width, height) : 
     matrix = img.imread("output.jpg")
 
-    x1 = y = xf = y2 = -1
+    x1 = y = xf = yf = -1
     #gets a pixel in color tolerance of key
     #then sees if surounding area is tolerable 
     for i in range(len(matrix)) :
         for j in range(len(matrix[i])) :
             if similarRGB(key, list(matrix[i,j]), tolerance):
-                if not x1 == -1: 
-                    if not xf == -1 : return (x1, y, xf, yf)
+                if not x1 == -1 and not xf == -1 : return (x1, y, xf, yf)
 
                 checkSpace = int((height * width) * domain)
                 if x1 == -1 :
-                    if homogenusArea(key,matrix,tolerance,checkSpace,i,j) :
+                    if homogenusArea(key,matrix,tolerance,checkSpace,i,j,width, height) :
                         x1 = j
                         y = i 
                 if xf == -1 :
-                    if homogenusArea(key,matrix,tolerance,checkSpace,width - i, height -j) :
+                    if homogenusArea(key,matrix,tolerance,checkSpace,width - i, height -j, width, height) :
                         xf = width - i
                         yf = height - j
                               
     return (0,0,0,0)
 
-
+#Gets a screenshot of the browser with the document.
+#Does not produce image of just the article.
 # Assumes edge theme has been set correctly to bubblegum
 def screenShot(directory, name) :
     root = tkinter.Tk()
@@ -78,7 +97,8 @@ def screenShot(directory, name) :
     # rgb (253,112,161) 
     key = [253,112,161]
 
-    tolerance = .1
+
+    tolerance = .05
     domain = .01
     x = y = xf = yf = 0
 
@@ -87,20 +107,6 @@ def screenShot(directory, name) :
 
     im=ImageGrab.grab(bbox=(x,y,xf,height))
     im.save("output.jpg")
-
-    key = [0,0,0]
-    init = [x,y,-xf,-yf]
-    (x,y,xf,yf) = getAxes(key,tolerance,domain, xf, height)
-    x += init[0]
-    y += init[1]
-    xf += init[2]
-    yf += init[3]
-
-    print (x,y,xf,yf)
-
-    im=ImageGrab.grab(bbox=(x,y,xf,yf))
-    im.save("output.jpg")
-
 
 
 
@@ -149,3 +155,5 @@ def getArticleJpeg () :
 
     
 getArticleJpeg()
+
+# thing(20)
