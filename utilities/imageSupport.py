@@ -1,3 +1,6 @@
+#In progress.
+# Will posibly be employed to get jpg images for website
+
 import requests
 import pyscreenshot as ImageGrab
 import tkinter
