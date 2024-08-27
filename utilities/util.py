@@ -1,7 +1,7 @@
 from serpapi import GoogleSearch
 import json
-from dynamicArr import *
-from classes import *
+from utilities.dynamicArr import *
+from utilities.classes import *
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -10,165 +10,124 @@ import os
 
 ignoreSym = "@ignore@"
 
-def authorFormat (content) :
-  # in converting dict to json with dump char " becomes \"
-  # This is bad. So @c is replaced with " when reading
-  # to fix this. Also @b is endpoint, flags pos to remove 
-  #end and init quote
-  prod = '@b[{'
+def authorFormat(content : str):
+    
+    # For some reason it gets output with @cgiven@c: @c
+    # content = content.replace("@cgiven@c: @c", '').strip()
 
-  for i in content :
-    if i == ',' :
-      prod += '@c},{'
-    else :
-      prod += i
-  
-  prod += '@c}]@b'
-  return prod
 
-def getDate (content) :
-  lookItem = "Publication date"
-  if str(content).find(lookItem) == -1 : 
-    return ignoreSym
+    print(f"Authors are {content.split(',')}")
+    prod = '@b[{'
+    for i in content:
+        if i == ',':
+            prod += '@c},{'
+        else:
+            prod += i
+    prod += '@c}]@b'
+    return content
 
-  start = str(content).find(lookItem) + len(lookItem)
+def getDate(content):
+    lookItem = "Publication date"
+    if lookItem not in content:
+        return ignoreSym
 
-  content = content[start:]
-  lookItem = 'gsc_oci_value">'
-  start = str(content).find(lookItem) + len(lookItem)
-  content = content[start:]
-  lookItem = '<'
-  end = str(content).find(lookItem)
+    start = content.find(lookItem) + len(lookItem)
+    content = content[start:]
+    lookItem = 'gsc_oci_value">'
+    start = content.find(lookItem) + len(lookItem)
+    content = content[start:]
+    end = content.find('<')
+    date = content[:end].strip()
 
-  date = content[:end]
+    if len(date) >= 4 and date[-4:].isdigit():
+        year = date[-4:]
+        return f'@b{{@cdate-parts@c:[[{year}]]}}@b'
+    
+    return content[:end]
 
-  # to just get year
-  count = 0
-  for i in range (len(date)) :
-    if date[i].isdigit() :
-      count += 1
-      if count == 4 :
-        # for formatting purposes
-        return '@b{@cdate-parts@c:[[@c'+date[i-3:i+1]+'@c]]}@b'
-    else : count = 0
+def reduce(name):
+    return name.split()[-1]
 
-  return content[:end]
-
-#Reduce given abrev name to just last name. 
-#Useful as search item.
-def reduce (name) :
-    while not name.find(' ') == -1 :
-        name = name[name.find(' ')+1:]
-    return name
-
-def getFull (search, input) :
-    if str(search).find(input) == -1 : return None
-    endIndex = str(search).find(input) + len(input) -1
-
+def getFull(search, input):
+    if input not in search:
+        return None
+    endIndex = search.find(input) + len(input) - 1
     output = ""
     i = endIndex
-    while not (search[i] == ',' or i < 0 or search[i] == '>') :
+    while i >= 0 and search[i] not in {',', '>'}:
         output = search[i] + output
         i -= 1
-    return "@cgiven@c: @c" + output.strip()
+    return f"{output.strip()}"
 
-def betterAuthNames(abname, content) :
+def betterAuthNames(abname, content):
     names = abname.split(',')
     product = ""
-    for i in names :
+    for i in names:
         lastN = reduce(i)
         extendedName = getFull(content, lastN)
-        if extendedName == None :
-             continue # may add additional means to find names later
-        else : product += extendedName + ', '
+        if extendedName is not None:
+            product += extendedName + ', '
+    return product[:-2]
 
-    product = product [:len(product)-2]
-    return product
+def addToMaster(readFileName, FILE):
+    if ".json" in readFileName:
+        with open(readFileName, "r") as f:
+            addition = f.read()
+            if ignoreSym in addition:
+                return
+            addition = addition.replace(',{  ..."}', '')
+            addition = addition.replace('@b"', '').replace('"@b', '')
+            addition = addition.replace('@c', '"')
+            FILE.write(addition + ",\n")
 
-# For making single repo of article data
-def addToMaster (readFileName, FILE) :
-  if ".json" in readFileName :
-    f = open(readFileName, "r")
-    addition = str(f.read())
-
-    if not addition.find(ignoreSym) == -1 : return
-
-    # for some articles, are getting ... as a name. 
-    # Suppose related to use of SerapAPI
-    addition = addition.replace(',{  ..."}','')
-
-    addition = addition.replace('@b"','')
-    addition = addition.replace('"@b','')
-
-    addition = addition.replace('@c','"')
-
-    FILE.write(addition + ",\n")
-
-def getContent (url, auths): 
-    #helps with not being blocked by scholar
+def getContent(url, auths):
     user_agent_list = [
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
-      ]
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    ]
     user_agent = random.choice(user_agent_list)
-    headers = {'User_Agent':user_agent}
+    headers = {'User-Agent': user_agent}
 
-    r = requests.get(url,headers=headers,)
-     
-    try:
-      if not str(r) == "<Response [200]>" : raise Exception
-    except : 
-      print ("We have been found")
-      return "found", "found", "found"
+    r = requests.get(url, headers=headers)
+    
+    if r.status_code != 200:
+        print(f"Request failed with status code {r.status_code}")
+        return "found", "found", "found"
 
-    # Parsing the HTML
     soup = BeautifulSoup(r.content, 'html.parser')
     soup2 = BeautifulSoup(r.text, 'html.parser')
     
     searchItem = ">Authors</div><div class"
     startIndex = str(soup2).find(searchItem)
-    forNames = str(soup2)[startIndex: startIndex + (len(auths.split(','))*25) + len(searchItem) * 3]
+    forNames = str(soup2)[startIndex: startIndex + (len(auths.split(',')) * 25) + len(searchItem) * 3]
     results = str(soup)
 
-    desription = str("")
+    description = ""
+    subs = ["OBJECTIVE", "BACKGROUND", "METHODS"]
 
-    subs = ["OBJECTIVE","BACKGROUND","METHODS"]
-
-    if results.lower().find('objective') == -1 :
-        subs.remove('OBJECTIVE')
-    if results.lower().find('background') == -1 :
-        subs.remove('BACKGROUND')
-    if results.lower().find('methods') == -1 :
-        subs.remove('METHODS')
-
-    for i in range (len(subs)):
+    for sub in subs:
         startTarget = '"gsh_csp"'
-
-        if results.find(startTarget) == -1 :
-          startTarget = '"gsh_small"'
-          if results.find(startTarget) == -1 :
-            break
+        if startTarget not in results:
+            startTarget = '"gsh_small"'
+            if startTarget not in results:
+                break
 
         endTarget = '</div>'
-        results = results[int(results.find(startTarget)) + len (startTarget) + 1:]
-        end = results[len(startTarget):].find(endTarget) + len (startTarget)
-        desription += subs[i] + ": " + results[:end]
+        start = results.find(startTarget) + len(startTarget)
+        results = results[start:]
+        end = results.find(endTarget)
+        description += f"{sub}: {results[:end]}"
 
-    return (desription, str(betterAuthNames(auths,forNames)),str(getDate(str(soup2))))
+    return description, betterAuthNames(auths, forNames), getDate(str(soup2))
 
-# to isolate all articles discovered in SerapAPI search
 def divide(text):
-  temp = text
-  arr = DynamicArray ()
-  searchItem = "title"
-
-  while (1) :
-    found = temp.find(searchItem)
-    if found == -1: break
-    arr.append("'title" + temp[0:found])
-    temp = temp[found + len(searchItem):len(temp)-found + len(searchItem)]
-    
-  return arr
+    arr = DynamicArray()
+    searchItem = "title"
+    while searchItem in text:
+        found = text.find(searchItem)
+        arr.append(f"'title{text[:found]}")
+        text = text[found + len(searchItem):]
+    return arr

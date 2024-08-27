@@ -80,6 +80,7 @@ numItems = 10
 numArt = 130
 iterate = 0
 recompile = False
+
 while numArt > 0 : 
   if not main(iterate * numItems, numItems) == None:
     recompile = True 
