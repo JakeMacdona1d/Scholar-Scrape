@@ -8,7 +8,8 @@ import os.path
 
 def main (start, numItems) :
   params = {
-    "api_key": os.environ['serapapiKey'],
+    # Yes this is bad practice. But the service is free soooo i dont care
+    "api_key": "c801fb0ffe9a68445624b9e9c7bd2d0a84bbc0bd9db4506cf91f267b8b3f44f3",
       "engine": "google_scholar_author",
       "author_id": "G1CnZ38AAAAJ", #Nathan's Id
       "hl": "en",
@@ -79,22 +80,25 @@ def main (start, numItems) :
 numItems = 10
 numArt = 130
 iterate = 0
-recompile = False
+recompile = True
 
-while numArt > 0 : 
-  if not main(iterate * numItems, numItems) == None:
-    recompile = True 
-  numArt -= numItems
-  iterate += 1
+if __name__ == "__main__":
+  try:
+    while numArt > 0 : 
+      if not main(iterate * numItems, numItems) == None:
+        recompile = True 
+      numArt -= numItems
+      iterate += 1
 
-#used to make a single js file with all objects defined in the json files
-if recompile :
-  path = "datCache"
-  dir_list = os.listdir(path)
-  new = open("output/publications.js", "w")
-  new.write("publications = [\n")
-  for i in dir_list :
-      addToMaster (path +'/'+i, new)
-  back = open("output/oldPub.txt", "r")
-  new.write(back.read())
+  finally:
+      #used to make a single js file with all objects defined in the json files
+    if recompile :
+      path = "datCache"
+      dir_list = os.listdir(path)
+      new = open("output/publications.js", "w")
+      new.write("publications = [\n")
+      for i in dir_list :
+          addToMaster (path +'/'+i, new)
+      back = open("output/oldPub.txt", "r")
+      new.write(back.read())
 
